@@ -1,0 +1,25 @@
+{
+    "i18n": true,
+    "type": "panel",
+    "items": {
+        "deviceIp": {
+            "type": "text",
+            "label": "DeviceIP",
+            "help": "DeviceIpHelp",
+            "sm": 12,
+            "md": 6,
+            "lg": 6,
+            "newLine": true
+          }, 
+        "option1": {
+            "type": "checkbox",
+            "label": "option1",
+            "newLine": true
+        },
+        "option2": {
+            "type": "text",
+            "label": "option2",
+            "newLine": true
+        }
+    }
+}
