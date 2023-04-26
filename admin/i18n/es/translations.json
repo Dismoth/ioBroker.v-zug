@@ -1,7 +1,7 @@
 {
     "v-zug adapter settings": "Ajustes del adaptador para v-zug",
-    "option1": "Opción 1",
-    "option2": "opcion 2",
     "DeviceIP": "IP del dispositivo",
-    "DeviceIpHelp": "ip o nombre de host del dispositivo V-Zug"
+    "DeviceIpHelp": "ip o nombre de host del dispositivo V-Zug",
+    "UpdateInterval": "Intervalo de actualización",
+    "UpdateIntervalHelp": "Refresh interval in minutes"
 }

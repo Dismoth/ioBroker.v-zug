@@ -77,7 +77,7 @@ class VZug extends utils.Adapter {
                 await this.setStateAsync("info.apiVersion", data.value, true);
 
             } else {
-                this.log.error("Could not retrieve data form device, status code " + axiosReponse.status);
+                this.log.error(`Could not retrieve data form device, status code ${axiosReponse.status}`);
             }
 
         } catch (e) {
@@ -169,7 +169,7 @@ class VZug extends utils.Adapter {
                 await this.setStateAsync("device.Program", data.Program, true);
                 await this.setStateAsync("device.Status", data.Status, true);
 
-                this.log.info(data.ProgramEnd.EndType);
+                //this.log.info(data.ProgramEnd.EndType);
 
             } else {
                 this.log.error("Could not retrieve data form device, status code " + axiosReponse.status);
@@ -194,23 +194,6 @@ class VZug extends utils.Adapter {
         }
     }
 
-    // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-    // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-    // /**
-    //  * Is called if a subscribed object changes
-    //  * @param {string} id
-    //  * @param {ioBroker.Object | null | undefined} obj
-    //  */
-    // onObjectChange(id, obj) {
-    //     if (obj) {
-    //         // The object was changed
-    //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-    //     } else {
-    //         // The object was deleted
-    //         this.log.info(`object ${id} deleted`);
-    //     }
-    // }
-
     /**
      * Is called if a subscribed state changes
      * @param {string} id
@@ -225,24 +208,6 @@ class VZug extends utils.Adapter {
             this.log.info(`state ${id} deleted`);
         }
     }
-
-    // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-    // /**
-    //  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-    //  * Using this method requires "common.messagebox" property to be set to true in io-package.json
-    //  * @param {ioBroker.Message} obj
-    //  */
-    // onMessage(obj) {
-    //     if (typeof obj === "object" && obj.message) {
-    //         if (obj.command === "send") {
-    //             // e.g. send email or pushover or whatever
-    //             this.log.info("send command");
-
-    //             // Send response in callback if required
-    //             if (obj.callback) this.sendTo(obj.from, obj.command, "Message received", obj.callback);
-    //         }
-    //     }
-    // }
 }
 
 if (require.main !== module) {

@@ -2,6 +2,6 @@
     "v-zug adapter settings": "Adaptereinstellungen für v-zug",
     "DeviceIP": "Geräte-IP",
     "DeviceIpHelp": "IP oder Hostname vom V-Zug-Gerät",
-    "UpdateInterval": "Aktualisierungsintervall",
+    "UpdateInterval": "Updateintervall",
     "UpdateIntervalHelp": "Aktualisierungsintervall in Minuten"
 }
