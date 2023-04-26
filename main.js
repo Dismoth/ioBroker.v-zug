@@ -23,8 +23,6 @@ class VZug extends utils.Adapter {
         });
         this.on("ready", this.onReady.bind(this));
         this.on("stateChange", this.onStateChange.bind(this));
-        // this.on("objectChange", this.onObjectChange.bind(this));
-        // this.on("message", this.onMessage.bind(this));
         this.on("unload", this.onUnload.bind(this));
     }
 
@@ -33,17 +31,34 @@ class VZug extends utils.Adapter {
      */
     async onReady() {
         // Initialize your adapter here
-        let data;
-
+ 
         // Reset the connection indicator during startup
         this.setState("info.connection", false, true);
+        if (this.config.interval < 0.5) {
+          this.log.info("Set interval to minimum 0.5");
+          this.config.interval = 0.5;
+        }
 
+        this.updateInterval = null;
+
+        // Get info on start
+        await this.getAPIVersion();
+        await this.getDeviceStatus();
+        
+        // Interval 
+        this.updateInterval = setInterval(async () => {
+            await this.getDeviceStatus();
+          }, this.config.interval * 60 * 1000);
+
+    }
+
+    async getAPIVersion() {
         const apiVersion = `http://${this.config.deviceIp}/ai?command=getAPIVersion`;
         try {
             let axiosReponse = await axios.get(apiVersion);
             if (axiosReponse.status === 200) {
                 this.setState("info.connection", true, true);
-                data = axiosReponse.data;
+                let data = axiosReponse.data;
                 this.log.info("api Version: " + data.value);
 
                 await this.setObjectNotExistsAsync("info.apiVersion", {
@@ -65,12 +80,18 @@ class VZug extends utils.Adapter {
                 this.log.error("Could not retrieve data form device, status code " + axiosReponse.status);
             }
 
-            const deviceStatus = `http://${this.config.deviceIp}/ai?command=getDeviceStatus`;
-            this.log.info("url: " + deviceStatus);
+        } catch (e) {
+            this.log.error("Could not retrieve data: " + e.message);
+        }
+    }
 
-            axiosReponse = await axios.get(deviceStatus);
+    async getDeviceStatus() {
+        const deviceStatus = `http://${this.config.deviceIp}/ai?command=getDeviceStatus`;
+        this.log.info("url: " + deviceStatus);
+        try {
+            let axiosReponse = await axios.get(deviceStatus);
             if (axiosReponse.status === 200) {
-                data = axiosReponse.data;
+                let data = axiosReponse.data;
 
                 //create folder, ID should always be unique and constant for a certain device.
                 await this.setObjectNotExistsAsync("device", {
@@ -154,48 +175,9 @@ class VZug extends utils.Adapter {
                 this.log.error("Could not retrieve data form device, status code " + axiosReponse.status);
             }
 
-            /*
-            let getCommand = `http://${this.config.deviceIp}/hh?command=getCommand`;
-
-            this.log.info("getCommand: " + getCommand + "&value=ecomXstatXtotal");
-            this.log.info("getCommand: " + getCommand + "&value=ecomXstatXavarage");
-            */
-
-            //http://192.168.200.50/ai?command=getLastPUSHNotifications
-
         } catch (e) {
             this.log.error("Could not retrieve data: " + e.message);
-        }
-
-        // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-        //this.subscribeStates("testVariable");
-        // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
-        //this.subscribeStates("lights.*");
-        // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-        //this.subscribeStates("*");
-
-        /*
-			setState examples
-			you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-		*/
-
-        // the variable testVariable is set to true as command (ack=false)
-        //await this.setStateAsync("testVariable", true);
-
-        // same thing, but the value is flagged "ack"
-        // ack should be always set to true if the value is received from or acknowledged from the target system
-        //await this.setStateAsync("testVariable", { val: true, ack: true });
-
-        // same thing, but the state is deleted after 30s (getState will return null afterwards)
-        //await this.setStateAsync("testVariable", { val: true, ack: true, expire: 30 });
-
-        // examples for the checkPassword/checkGroup functions
-        //let result = await this.checkPasswordAsync("admin", "iobroker");
-        //this.log.info("check user admin pw iobroker: " + result);
-
-        //result = await this.checkGroupAsync("admin", "admin");
-        //this.log.info("check group user admin group admin: " + result);
-
+        }       
     }
 
     /**
@@ -205,11 +187,7 @@ class VZug extends utils.Adapter {
     onUnload(callback) {
         try {
             // Here you must clear all timeouts or intervals that may still be active
-            // clearTimeout(timeout1);
-            // clearTimeout(timeout2);
-            // ...
-            // clearInterval(interval1);
-
+            this.updateInterval && clearInterval(this.updateInterval);
             callback();
         } catch (e) {
             callback();
