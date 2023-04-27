@@ -80,8 +80,8 @@
         ]
     },
     "native": {
-        "deviceIp": "192.168.200.50",
-        "interval": 10
+        "deviceIp": "192.168.200.34",
+        "interval": 5
     },
     "objects": [],
     "instanceObjects": [
