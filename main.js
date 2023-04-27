@@ -31,12 +31,12 @@ class VZug extends utils.Adapter {
      */
     async onReady() {
         // Initialize your adapter here
- 
+
         // Reset the connection indicator during startup
         this.setState("info.connection", false, true);
         if (this.config.interval < 0.5) {
-          this.log.info("Set interval to minimum 0.5");
-          this.config.interval = 0.5;
+            this.log.info("Set interval to minimum 0.5");
+            this.config.interval = 0.5;
         }
 
         this.updateInterval = null;
@@ -44,21 +44,20 @@ class VZug extends utils.Adapter {
         // Get info on start
         await this.getAPIVersion();
         await this.getDeviceStatus();
-        
-        // Interval 
+
+        // Interval
         this.updateInterval = setInterval(async () => {
             await this.getDeviceStatus();
-          }, this.config.interval * 60 * 1000);
-
+        }, this.config.interval * 60 * 1000);
     }
 
     async getAPIVersion() {
         const apiVersion = `http://${this.config.deviceIp}/ai?command=getAPIVersion`;
         try {
-            let axiosReponse = await axios.get(apiVersion);
+            const axiosReponse = await axios.get(apiVersion);
             if (axiosReponse.status === 200) {
                 this.setState("info.connection", true, true);
-                let data = axiosReponse.data;
+                const data = axiosReponse.data;
                 this.log.info("api Version: " + data.value);
 
                 await this.setObjectNotExistsAsync("info.apiVersion", {
@@ -68,18 +67,16 @@ class VZug extends utils.Adapter {
                         role: "state",
                         read: true,
                         write: false,
-                        name: "Api Version"
+                        name: "Api Version",
                     },
-                    native: {}
+                    native: {},
                 });
 
                 //now set the value of the state. Set 'ack' to true in order to show ioBroker that this data comes from the 'device'.
                 await this.setStateAsync("info.apiVersion", data.value, true);
-
             } else {
                 this.log.error(`Could not retrieve data form device, status code ${axiosReponse.status}`);
             }
-
         } catch (e) {
             this.log.error("Could not retrieve data: " + e.message);
         }
@@ -89,17 +86,17 @@ class VZug extends utils.Adapter {
         const deviceStatus = `http://${this.config.deviceIp}/ai?command=getDeviceStatus`;
         this.log.info("url: " + deviceStatus);
         try {
-            let axiosReponse = await axios.get(deviceStatus);
+            const axiosReponse = await axios.get(deviceStatus);
             if (axiosReponse.status === 200) {
-                let data = axiosReponse.data;
+                const data = axiosReponse.data;
 
                 //create folder, ID should always be unique and constant for a certain device.
                 await this.setObjectNotExistsAsync("device", {
                     type: "channel",
                     common: {
-                        name: "Gerät"
+                        name: "Gerät",
                     },
-                    native: {}
+                    native: {},
                 });
 
                 await this.setObjectNotExistsAsync("device.DeviceName", {
@@ -109,9 +106,9 @@ class VZug extends utils.Adapter {
                         role: "value",
                         read: true,
                         write: false,
-                        name: "Geräte Name"
+                        name: "Geräte Name",
                     },
-                    native: {}
+                    native: {},
                 });
 
                 await this.setObjectNotExistsAsync("device.Serial", {
@@ -121,9 +118,9 @@ class VZug extends utils.Adapter {
                         role: "value",
                         read: true,
                         write: false,
-                        name: "Serienummer"
+                        name: "Serienummer",
                     },
-                    native: {}
+                    native: {},
                 });
 
                 await this.setObjectNotExistsAsync("device.Inactive", {
@@ -133,9 +130,9 @@ class VZug extends utils.Adapter {
                         role: "state",
                         read: true,
                         write: false,
-                        name: "Ausgeschaltet"
+                        name: "Ausgeschaltet",
                     },
-                    native: {}
+                    native: {},
                 });
 
                 await this.setObjectNotExistsAsync("device.Program", {
@@ -145,9 +142,9 @@ class VZug extends utils.Adapter {
                         role: "value",
                         read: true,
                         write: false,
-                        name: "Programm"
+                        name: "Programm",
                     },
-                    native: {}
+                    native: {},
                 });
 
                 await this.setObjectNotExistsAsync("device.Status", {
@@ -157,9 +154,9 @@ class VZug extends utils.Adapter {
                         role: "state",
                         read: true,
                         write: false,
-                        name: "Status"
+                        name: "Status",
                     },
-                    native: {}
+                    native: {},
                 });
 
                 //now set the value of the states. Set 'ack' to true in order to show ioBroker that this data comes from the 'device'.
@@ -170,14 +167,12 @@ class VZug extends utils.Adapter {
                 await this.setStateAsync("device.Status", data.Status, true);
 
                 //this.log.info(data.ProgramEnd.EndType);
-
             } else {
                 this.log.error("Could not retrieve data form device, status code " + axiosReponse.status);
             }
-
         } catch (e) {
             this.log.error("Could not retrieve data: " + e.message);
-        }       
+        }
     }
 
     /**
