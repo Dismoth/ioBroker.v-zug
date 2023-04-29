@@ -11,7 +11,6 @@ const axios = require("axios").default;
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
-
 class VZug extends utils.Adapter {
     /**
      * @param {Partial<utils.AdapterOptions>} [options={}]
